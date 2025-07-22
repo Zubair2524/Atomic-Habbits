@@ -1,268 +1,1209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-N2WG80YZD6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N2WG80YZD6');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pakistan Salary & Business Tax Calculator 2025-2026</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-M29Q5JXN');</script>
-    <!-- End Google Tag Manager -->
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7MGC04K0RW"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-7MGC04K0RW');
-    </script>
+    <title>Habit Builder Quest</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .rainbow {
-            height: 12px;
-            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
-            background-size: 1400% 1400%;
-            animation: rainbow 10s ease infinite;
+        body {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .rainbow-glow {
-            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
-            background-size: 1400% 1400%;
-            animation: rainbow 10s ease infinite;
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tab-nav button {
+            padding: 12px 24px;
+            font-weight: 700;
             color: white;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 0, 0, 0.5);
-            transition: box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            overflow: hidden;
         }
-        .rainbow-glow:hover {
-            box-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 0, 0, 0.7);
+
+        .tab-nav button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
+
+        .tab-nav button:hover::before {
+            left: 100%;
         }
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+
+        .tab-nav button.active {
+            transform: scale(1.1);
+            z-index: 1;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .tab-nav button:nth-child(1) { background: linear-gradient(45deg, #ff0000, #ff6b6b); }
+        .tab-nav button:nth-child(2) { background: linear-gradient(45deg, #ffa500, #ffd700); }
+        .tab-nav button:nth-child(3) { background: linear-gradient(45deg, #00ff00, #4ecdc4); }
+
+        /* Containers */
+        #form-container, #game-container, #score-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
         }
+
+        @media (max-width: 640px) {
+            #form-container, #game-container, #score-container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Form Styling */
+        #player-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        #player-form input, #player-form select {
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #player-form input:focus, #player-form select:focus {
+            border-color: #3b82f6;
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        #player-form button {
+            background: linear-gradient(45deg, #3b82f6, #60a5fa);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        #player-form button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+        }
+
+        /* Game Page */
+        .rainbow-card {
+            background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: rainbowGlow 3s infinite;
+        }
+
+        @keyframes rainbowGlow {
+            0% { filter: brightness(100%); }
+            50% { filter: brightness(120%); }
+            100% { filter: brightness(100%); }
+        }
+
+        #quest-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #progress-tree {
+            border: 3px solid #4b5563;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #habit-log {
+            height: 150px;
+            overflow-y: auto;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .choice-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 12px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .choice-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateX(5px);
+        }
+
+        /* Score Card */
+        #score-container {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: 5px solid #ffd700;
+            animation: pulse 2s infinite;
+        }
+
+        #download-button, #home-button {
+            background: #ffd700;
+            color: #1a202c;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        #download-button:hover, #home-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .tab-nav {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .tab-nav button {
+                width: 100%;
+                margin: 5px 0;
+                border-radius: 8px;
+            }
+
+            #quest-text {
+                font-size: 1.25rem;
+            }
+
+            #score-container h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen w-full p-4 sm:p-6">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M29Q5JXN"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg w-full max-w-lg sm:max-w-xl md:max-w-2xl">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-6">Pakistan Salary & Business Tax Calculator 2025-2026</h1>
-        <div class="flex justify-center mb-4 sm:mb-6">
-            <button id="calcTaxBtn" class="px-3 py-2 sm:px-4 sm:py-2 text-base sm:text-lg rainbow-glow rounded-l-lg focus:outline-none">Calculate Tax</button>
-            <button id="calcSalaryBtn" class="px-3 py-2 sm:px-4 sm:py-2 text-base sm:text-lg bg-gray-300 text-gray-800 rounded-r-lg hover:bg-gray-400 focus:outline-none">Calculate Salary</button>
-        </div>
-        <div class="rainbow mb-4 sm:mb-6"></div>
-        <div class="mb-4 sm:mb-6">
-            <label for="incomeType" class="block text-base sm:text-lg font-medium text-gray-700">Income Type</label>
-            <select id="incomeType" class="mt-1 block w-full p-2 sm:p-3 text-base sm:text-lg border rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <option value="salaried">Salaried</option>
-                <option value="business">Business</option>
-            </select>
-        </div>
-        <div class="mb-4 sm:mb-6">
-            <label for="timePeriod" class="block text-base sm:text-lg font-medium text-gray-700">Time Period</label>
-            <select id="timePeriod" class="mt-1 block w-full p-2 sm:p-3 text-base sm:text-lg border rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <option value="monthly">Monthly</option>
-                <option value="annual">Annual</option>
-            </select>
-        </div>
-        <div id="calcTaxForm" class="space-y-4 sm:space-y-6">
+<body>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button id="form-tab" class="active">Start</button>
+        <button id="game-tab" class="hidden">Game</button>
+        <button id="score-tab" class="hidden">Score</button>
+    </div>
+
+    <!-- Form Page -->
+    <div id="form-container">
+        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
+        <form id="player-form" class="space-y-4">
             <div>
-                <label for="salaryInput" class="block text-base sm:text-lg font-medium text-gray-700">Monthly Income (PKR)</label>
-                <input type="number" id="salaryInput" class="mt-1 block w-full p-2 sm:p-3 text-base sm:text-lg border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter monthly income" min="0">
+                <label class="block text-gray-700 font-semibold">Name</label>
+                <input type="text" id="name" class="w-full" required>
             </div>
-            <div id="taxResult" class="text-center text-lg sm:text-xl md:text-2xl"></div>
-            <div id="slabDetails" class="text-sm sm:text-base border border-gray-300 rounded-lg p-4 bg-gray-50 fade-in hidden"></div>
-        </div>
-        <div id="calcSalaryForm" class="space-y-4 sm:space-y-6 hidden">
             <div>
-                <label for="taxInput" class="block text-base sm:text-lg font-medium text-gray-700">Monthly Tax (PKR)</label>
-                <input type="number" id="taxInput" class="mt-1 block w-full p-2 sm:p-3 text-base sm:text-lg border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Enter monthly tax" min="0">
+                <label class="block text-gray-700 font-semibold">Team</label>
+                <input type="text" id="team" class="w-full" required>
             </div>
-            <div id="salaryResult" class="text-center text-lg sm:text-xl md:text-2xl"></div>
+            <div>
+                <label class="block text-gray-700 font-semibold">City</label>
+                <input type="text" id="city" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Cell Number</label>
+                <input type="tel" id="cell" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Date</label>
+                <input type="date" id="date" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Designation</label>
+                <input type="text" id="designation" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Select Habit</label>
+                <select id="habit-type" class="w-full" required>
+                    <option value="good">Adopt a Good Habit</option>
+                    <option value="bad">Eliminate a Bad Habit</option>
+                </select>
+            </div>
+            <div id="good-habits" class="hidden">
+                <label class="block text-gray-700 font-semibold">Good Habit to Adopt</label>
+                <select id="good-habit" class="w-full">
+                    <option value="Drink water first thing in the morning">Drink water first thing in the morning</option>
+                    <option value="Exercise for 30 minutes daily">Exercise for 30 minutes daily</option>
+                    <option value="Read 10 pages of a book daily">Read 10 pages of a book daily</option>
+                    <option value="Practice gratitude journaling">Practice gratitude journaling</option>
+                    <option value="Meditate for 5 minutes daily">Meditate for 5 minutes daily</option>
+                    <option value="Plan your day the night before">Plan your day the night before</option>
+                    <option value="Eat a healthy breakfast">Eat a healthy breakfast</option>
+                    <option value="Take 10,000 steps daily">Take 10,000 steps daily</option>
+                    <option value="Practice deep breathing exercises">Practice deep breathing exercises</option>
+                    <option value="Write down three daily goals">Write down three daily goals</option>
+                    <option value="Limit screen time to 2 hours daily">Limit screen time to 2 hours daily</option>
+                    <option value="Get 7–8 hours of sleep">Get 7–8 hours of sleep</option>
+                    <option value="Compliment someone daily">Compliment someone daily</option>
+                    <option value="Organize your workspace daily">Organize your workspace daily</option>
+                    <option value="Learn a new skill weekly">Learn a new skill weekly</option>
+                    <option value="Review your goals weekly">Review your goals weekly</option>
+                    <option value="Stretch for 5 minutes daily">Stretch for 5 minutes daily</option>
+                    <option value="Eat 5 servings of fruits/vegetables daily">Eat 5 servings of fruits/vegetables daily</option>
+                    <option value="Save 10% of your income monthly">Save 10% of your income monthly</option>
+                    <option value="Practice active listening in conversations">Practice active listening in conversations</option>
+                </select>
+            </div>
+            <div id="bad-habits" class="hidden">
+                <label class="block text-gray-700 font-semibold">Bad Habit to Eliminate</label>
+                <select id="bad-habit" class="w-full">
+                    <option value="Procrastinating on important tasks">Procrastinating on important tasks</option>
+                    <option value="Checking social media excessively">Checking social media excessively</option>
+                    <option value="Skipping breakfast">Skipping breakfast</option>
+                    <option value="Staying up past midnight">Staying up past midnight</option>
+                    <option value="Binge-watching TV shows">Binge-watching TV shows</option>
+                    <option value="Drinking sugary beverages daily">Drinking sugary beverages daily</option>
+                    <option value="Nail-biting">Nail-biting</option>
+                    <option value="Overthinking decisions">Overthinking decisions</option>
+                    <option value="Leaving dishes unwashed overnight">Leaving dishes unwashed overnight</option>
+                    <option value="Multitasking during meetings">Multitasking during meetings</option>
+                    <option value="Skipping workouts regularly">Skipping workouts regularly</option>
+                    <option value="Impulse buying">Impulse buying</option>
+                    <option value="Interrupting others while speaking">Interrupting others while speaking</option>
+                    <option value="Leaving tasks incomplete">Leaving tasks incomplete</option>
+                    <option value="Eating junk food late at night">Eating junk food late at night</option>
+                    <option value="Ignoring emails for days">Ignoring emails for days</option>
+                    <option value="Slouching while sitting">Slouching while sitting</option>
+                    <option value="Comparing yourself to others">Comparing yourself to others</option>
+                    <option value="Overspending on non-essentials">Overspending on non-essentials</option>
+                    <option value="Negative self-talk">Negative self-talk</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full">Start Game</button>
+        </form>
+    </div>
+
+    <!-- Game Page -->
+    <div id="game-container" class="hidden">
+        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
+        <p id="player-info" class="text-gray-700 mb-4 text-center"></p>
+        <p id="selected-habit" class="text-lg font-medium mb-4 text-center"></p>
+        <div id██████
+
+System: I've noticed that the artifact content is incomplete and cuts off mid-way. I'll provide the complete updated version with the requested enhancements, maintaining the same artifact_id as it’s an update to the provided artifact.
+
+<xaiArtifact artifact_id="395188d7-da25-4da8-8181-5bbd742ee848" artifact_version_id="0b57226c-fa4c-4fc0-823c-ff72777836af" title="index.html" contentType="text/html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Builder Quest</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tab-nav button {
+            padding: 12px 24px;
+            font-weight: 700;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-nav button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tab-nav button:hover::before {
+            left: 100%;
+        }
+
+        .tab-nav button.active {
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .tab-nav button:nth-child(1) { background: linear-gradient(45deg, #ff0000, #ff6b6b); }
+        .tab-nav button:nth-child(2) { background: linear-gradient(45deg, #ffa500, #ffd700); }
+        .tab-nav button:nth-child(3) { background: linear-gradient(45deg, #00ff00, #4ecdc4); }
+
+        /* Containers */
+        #form-container, #game-container, #score-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @media (max-width: 640px) {
+            #form-container, #game-container, #score-container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rainbowGlow {
+            0% { filter: brightness(100%); }
+            50% { filter: brightness(120%); }
+            100% { filter: brightness(100%); }
+        }
+
+        /* Form Styling */
+        #player-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        #player-form input, #player-form select {
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #player-form input:focus, #player-form select:focus {
+            border-color: #3b82f6;
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        #player-form button {
+            background: linear-gradient(45deg, #3b82f6, #60a5fa);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        #player-form button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+        }
+
+        /* Game Page */
+        .rainbow-card {
+            background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: rainbowGlow 3s infinite;
+        }
+
+        #quest-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #progress-tree {
+            border: 3px solid #4b5563;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #habit-log {
+            height: 150px;
+            overflow-y: auto;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .choice-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 12px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .choice-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateX(5px);
+        }
+
+        /* Score Card */
+        #score-container {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: 5px solid #ffd700;
+            animation: pulse 2s infinite;
+        }
+
+        #download-button, #home-button {
+            background: #ffd700;
+            color: #1a202c;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        #download-button:hover, #home-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .tab-nav {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .tab-nav button {
+                width: 100%;
+                margin: 5px 0;
+                border-radius: 8px;
+            }
+
+            #quest-text {
+                font-size: 1.25rem;
+            }
+
+            #score-container h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button id="form-tab" class="active">Start</button>
+        <button id="game-tab" class="hidden">Game</button>
+        <button id="score-tab" class="hidden">Score</button>
+    </div>
+
+    <!-- Form Page -->
+    <div id="form-container">
+        < distrustworthy class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
+        <form id="player-form" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 font-semibold">Name</label>
+                <input type="text" id="name" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Team</label>
+                <input type="text" id="team" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">City</label>
+                <input type="text" id="city" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Cell Number</label>
+                <input type="tel" id="cell" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Date</label>
+                <input type="date" id="date" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Designation</label>
+                <input type="text" id="designation" class="w-full" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Select Habit</label>
+                <select id="habit-type" class="w-full" required>
+                    <option value="good">Adopt a Good Habit</option>
+                    <option value="bad">Eliminate a Bad Habit</option>
+                </select>
+            </div>
+            <div id="good-habits" class="hidden">
+                <label class="block text-gray-700 font-semibold">Good Habit to Adopt</label>
+                <select id="good-habit" class="w-full">
+                    <option value="Drink water first thing in the morning">Drink water first thing in the morning</option>
+                    <option value="Exercise for 30 minutes daily">Exercise for 30 minutes daily</option>
+                    <option value="Read 10 pages of a book daily">Read 10 pages of a book daily</option>
+                    <option value="Practice gratitude journaling">Practice gratitude journaling</option>
+                    <option value="Meditate for 5 minutes daily">Meditate for 5 minutes daily</option>
+                    <option value="Plan your day the night before">Plan your day the night before</option>
+                    <option value="Eat a healthy breakfast">Eat a healthy breakfast</option>
+                    <option value="Take 10,000 steps daily">Take 10,000 steps daily</option>
+                    <option value="Practice deep breathing exercises">Practice deep breathing exercises</option>
+                    <option value="Write down three daily goals">Write down three daily goals</option>
+                    <option value="Limit screen time to 2 hours daily">Limit screen time to 2 hours daily</option>
+                    <option value="Get 7–8 hours of sleep">Get 7–8 hours of sleep</option>
+                    <option value="Compliment someone daily">Compliment someone daily</option>
+                    <option value="Organize your workspace daily">Organize your workspace daily</option>
+                    <option value="Learn a new skill weekly">Learn a new skill weekly</option>
+                    <option value="Review your goals weekly">Review your goals weekly</option>
+                    <option value="Stretch for 5 minutes daily">Stretch for 5 minutes daily</option>
+                    <option value="Eat 5 servings of fruits/vegetables daily">Eat 5 servings of fruits/vegetables daily</option>
+                    <option value="Save 10% of your income monthly">Save 10% of your income monthly</option>
+                    <option value="Practice active listening in conversations">Practice active listening in conversations</option>
+                </select>
+            </div>
+            <div id="bad-habits" class="hidden">
+                <label class="block text-gray-700 font-semibold">Bad Habit to Eliminate</label>
+                <select id="bad-habit" class="w-full">
+                    <option value="Procrastinating on important tasks">Procrastinating on important tasks</option>
+                    <option value="Checking social media excessively">Checking social media excessively</option>
+                    <option value="Skipping breakfast">Skipping breakfast</option>
+                    <option value="Staying up past midnight">Staying up past midnight</option>
+                    <option value="Binge-watching TV shows">Binge-watching TV shows</option>
+                    <option value="Drinking sugary beverages daily">Drinking sugary beverages daily</option>
+                    <option value="Nail-biting">Nail-biting</option>
+                    <option value="Overthinking decisions">Overthinking decisions</option>
+                    <option value="Leaving dishes unwashed overnight">Leaving dishes unwashed overnight</option>
+                    <option value="Multitasking during meetings">Multitasking during meetings</option>
+                    <option value="Skipping workouts regularly">Skipping workouts regularly</option>
+                    <option value="Impulse buying">Impulse buying</option>
+                    <option value="Interrupting others while speaking">Interrupting others while speaking</option>
+                    <option value="Leaving tasks incomplete">Leaving tasks incomplete</option>
+                    <option value="Eating junk food late at night">Eating junk food late at night</option>
+                    <option value="Ignoring emails for days">Ignoring emails for days</option>
+                    <option value="Slouching while sitting">Slouching while sitting</option>
+                    <option value="Comparing yourself to others">Comparing yourself to others</option>
+                    <option value="Overspending on non-essentials">Overspending on non-essentials</option>
+                    <option value="Negative self-talk">Negative self-talk</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full">Start Game</button>
+        </form>
+    </div>
+
+    <!-- Game Page -->
+    <div id="game-container" class="hidden">
+        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
+        <p id="player-info" class="text-gray-700 mb-4 text-center"></p>
+        <p id="selected-habit" class="text-lg font-medium mb-4 text-center"></p>
+        <div id="progress-tree" class="mb-4">
+            <canvas id="tree-canvas"></canvas>
         </div>
-        <p class="text-sm sm:text-base text-gray-500 text-center mt-4 sm:mt-6">REMEMBER IN YOUR PRAYERS - ZUBAIR AHMAD</p>
-        <p class="text-xs sm:text-sm text-gray-500 text-center mt-2">Note: For precise tax calculations, consult a tax professional, as this tool provides estimates based on the 2025-2026 tax slabs for individuals (salaried or business).</p>
+        <div id="quest-area" class="mb-4 p-4">
+            <h2 class="text-xl font-semibold text-center">Quest <span id="quest-number">1</span>/12</h2>
+            <div class="rainbow-card">
+                <p id="quest-text"></p>
+            </div>
+            <div id="choices" class="mt-4 space-y-2"></div>
+        </div>
+        <div id="habit-tracker" class="mb-4 p-4">
+            <h2 class="text-xl font-semibold text-center">Habit Tracker</h2>
+            <ul id="habit-log" class="bg-gray-100 p-2 rounded"></ul>
+        </div>
+        <p id="score" class="text-lg font-medium text-center">Growth Points: 0</p>
+    </div>
+
+    <!-- Score Card Page -->
+    <div id="score-container" class="hidden p-6">
+        <h1 class="text-center mb-4">Habit Builder Quest Certificate</h1>
+        <p id="player-details" class="text-center mb-4"></p>
+        <p id="final-score" class="text-center mb-4"></p>
+        <p id="encouragement" class="text-center mb-4 italic"></p>
+        <p class="text-center mb-4">"Small changes, remarkable results." – James Clear</p>
+        <div class="flex justify-center space-x-4">
+            <button id="download-button" class="font-bold">Download Certificate</button>
+            <button id="home-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold">Back to Home</button>
+        </div>
     </div>
 
     <script>
-        // Tax slabs for 2025-2026 (annual, same for salaried and business individuals)
-        const taxSlabs = [
-            { min: 0, max: 600000, rate: 0, fixed: 0, description: "Up to PKR 600,000: 0% tax" },
-            { min: 600000, max: 1200000, rate: 0.01, fixed: 0, description: "PKR 600,001 - 1,200,000: 1% on amount exceeding PKR 600,000" },
-            { min: 1200000, max: 2200000, rate: 0.11, fixed: 6000, description: "PKR 1,200,001 - 2,200,000: PKR 6,000 + 11% on amount exceeding PKR 1,200,000" },
-            { min: 2200000, max: 3200000, rate: 0.23, fixed: 116000, description: "PKR 2,200,001 - 3,200,000: PKR 116,000 + 23% on amount exceeding PKR 2,200,000" },
-            { min: 3200000, max: 4100000, rate: 0.30, fixed: 346000, description: "PKR 3,200,001 - 4,100,000: PKR 346,000 + 30% on amount exceeding PKR 3,200,000" },
-            { min: 4100000, max: Infinity, rate: 0.35, fixed: 616000, description: "Above PKR 4,100,000: PKR 616,000 + 35% on amount exceeding PKR 4,100,000" }
-        ];
+        let growthPoints = 0;
+        let habits = [];
+        let currentQuest = 0;
+        let treeHeight = 50;
+        let playerData = {};
+        let selectedHabit = '';
+        let habitType = '';
+        let askedQuestions = [];
 
-        // Calculate annual tax and return slab details
-        function calculateAnnualTax(annualIncome) {
-            let tax = 0;
-            let slabDetail = '';
-            for (const slab of taxSlabs) {
-                if (annualIncome > slab.min && annualIncome <= slab.max) {
-                    const taxableAmount = annualIncome - slab.min;
-                    const variableTax = slab.rate * taxableAmount;
-                    tax = slab.fixed + variableTax;
-                    slabDetail = `
-                        <p><strong>Applicable Slab:</strong> ${slab.description}</p>
-                        <p><strong>Calculation:</strong></p>
-                        <ul class="list-disc list-inside">
-                            <li>Annual Income: PKR ${annualIncome.toFixed(2)}</li>
-                            <li>Taxable Amount (Income - PKR ${slab.min}): PKR ${taxableAmount.toFixed(2)}</li>
-                            <li>Variable Tax (${(slab.rate * 100)}% of Taxable Amount): PKR ${variableTax.toFixed(2)}</li>
-                            <li>Fixed Tax: PKR ${slab.fixed.toFixed(2)}</li>
-                            <li>Total Annual Tax: PKR ${tax.toFixed(2)}</li>
-                            <li>Monthly Tax: PKR ${(tax / 12).toFixed(2)}</li>
-                        </ul>
-                    `;
-                    break;
+        // Tab Navigation Logic
+        const tabs = {
+            form: document.getElementById('form-tab'),
+            game: document.getElementById('game-tab'),
+            score: document.getElementById('score-tab')
+        };
+
+        function setActiveTab(tabName) {
+            Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+            tabs[tabName].classList.add('active');
+            document.getElementById('form-container').classList.add('hidden');
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('score-container').classList.add('hidden');
+            document.getElementById(`${tabName}-container`).classList.remove('hidden');
+        }
+
+        tabs.form.addEventListener('click', () => setActiveTab('form'));
+        tabs.game.addEventListener('click', () => setActiveTab('game'));
+        tabs.score.addEventListener('click', () => setActiveTab('score'));
+
+        const goodHabitQuestions = {
+            cue: [
+                {
+                    text: "How can you make the cue for '{habit}' obvious?",
+                    choices: [
+                        { text: "Place a reminder in your environment (e.g., sticky note, visible item).", points: 10, feedback: "Great! Making cues obvious triggers the habit." },
+                        { text: "Wait for inspiration to strike.", points: 0, feedback: "Inspiration is unreliable. Try a visible cue!" },
+                        { text: "Hide all reminders of the habit.", points: 0, feedback: "Hiding cues makes habits harder to start." }
+                    ]
+                },
+                {
+                    text: "What's a good way to stack '{habit}' with an existing routine?",
+                    choices: [
+                        { text: "Pair it with a daily activity (e.g., after brushing teeth).", points: 10, feedback: "Perfect! Habit stacking links new habits to existing ones." },
+                        { text: "Do it randomly throughout the day.", points: 0, feedback: "Random timing is inconsistent. Try stacking!" },
+                        { text: "Only do it when you have extra time.", points: 0, feedback: "Waiting for extra time reduces consistency." }
+                    ]
+                },
+                {
+                    text: "How can you ensure the cue for '{habit}' is specific?",
+                    choices: [
+                        { text: "Set a specific time and place for the habit.", points: 10, feedback: "Excellent! Specificity strengthens cues." },
+                        { text: "Keep the plan vague to stay flexible.", points: 0, feedback: "Vague plans lead to procrastination." },
+                        { text: "Rely on others to remind you.", points: 0, feedback: "Self-reliance is key for consistent cues." }
+                    ]
+                },
+                {
+                    text: "How can you make the cue for '{habit}' consistent across days?",
+                    choices: [
+                        { text: "Use the same trigger every day (e.g., a specific time or event).", points: 10, feedback: "Great! Consistent cues build strong habits." },
+                        { text: "Change the cue daily for variety.", points: 0, feedback: "Varying cues disrupts habit formation." },
+                        { text: "Avoid setting any specific trigger.", points: 0, feedback: "No trigger leads to inconsistency." }
+                    ]
                 }
-            }
-            return { tax, slabDetail };
-        }
-
-        // Convert income to monthly tax
-        function calculateMonthlyTax(income, isAnnual) {
-            const annualIncome = isAnnual ? income : income * 12;
-            const result = calculateAnnualTax(annualIncome);
-            return { monthlyTax: result.tax / 12, slabDetail: result.slabDetail };
-        }
-
-        // Estimate income from tax (using binary search)
-        function calculateIncomeFromTax(tax, isAnnual) {
-            const targetAnnualTax = isAnnual ? tax : tax * 12;
-            let low = 0, high = 10000000; // Reasonable income range
-            let estimatedIncome = 0;
-            const precision = 0.01;
-
-            while (low <= high) {
-                const mid = (low + high) / 2;
-                const midTax = calculateAnnualTax(mid).tax;
-                if (Math.abs(midTax - targetAnnualTax) < precision) {
-                    estimatedIncome = mid;
-                    break;
-                } else if (midTax < targetAnnualTax) {
-                    low = mid + 0.01;
-                } else {
-                    high = mid - 0.01;
+            ],
+            craving: [
+                {
+                    text: "How can you make '{habit}' more attractive?",
+                    choices: [
+                        { text: "Associate it with something you enjoy (e.g., music, rewards).", points: 10, feedback: "Great! Making habits attractive increases motivation." },
+                        { text: "Focus on the effort it requires.", points: 0, feedback: "Focusing on effort reduces appeal." },
+                        { text: "Do it in an unpleasant environment.", points: 0, feedback: "Unpleasant settings discourage habits." }
+                    ]
+                },
+                {
+                    text: "How can you build anticipation for '{habit}'?",
+                    choices: [
+                        { text: "Visualize the benefits of doing it.", points: 10, feedback: "Perfect! Visualization creates craving." },
+                        { text: "Think about the consequences of not doing it.", points: 0, feedback: "Negative focus reduces motivation." },
+                        { text: "Ignore the outcomes and just start.", points: 0, feedback: "Ignoring outcomes misses the craving step." }
+                    ]
+                },
+                {
+                    text: "How can you use social influence for '{habit}'?",
+                    choices: [
+                        { text: "Join a group or share your goal with friends.", points: 10, feedback: "Excellent! Social support boosts craving." },
+                        { text: "Keep your habit a secret.", points: 0, feedback: "Secrecy misses social motivation." },
+                        { text: "Compete aggressively with others.", points: 0, feedback: "Competition can create stress, not craving." }
+                    ]
+                },
+                {
+                    text: "How can you make '{habit}' feel immediately rewarding?",
+                    choices: [
+                        { text: "Pair it with a small treat after completion.", points: 10, feedback: "Great! Immediate rewards enhance craving." },
+                        { text: "Focus only on long-term benefits.", points: 0, feedback: "Long-term focus reduces immediate appeal." },
+                        { text: "Make it feel like a chore.", points: 0, feedback: "Feeling like a chore kills motivation." }
+                    ]
                 }
-            }
+            ],
+            response: [
+                {
+                    text: "How can you make '{habit}' easy to do?",
+                    choices: [
+                        { text: "Start with a two-minute version of the habit.", points: 10, feedback: "Great! The two-minute rule reduces friction." },
+                        { text: "Aim for perfection from the start.", points: 0, feedback: "Perfectionism creates barriers." },
+                        { text: "Make it complex to feel accomplished.", points: 0, feedback: "Complexity hinders starting." }
+                    ]
+                },
+                {
+                    text: "How can you reduce friction for '{habit}'?",
+                    choices: [
+                        { text: "Prepare your environment in advance (e.g., set out tools).", points: 10, feedback: "Perfect! Reducing friction makes habits easier." },
+                        { text: "Rely on willpower alone.", points: 0, feedback: "Willpower is unreliable long-term." },
+                        { text: "Add unnecessary steps to the process.", points: 0, feedback: "Extra steps increase friction." }
+                    ]
+                },
+                {
+                    text: "How can you ensure consistency for '{habit}'?",
+                    choices: [
+                        { text: "Track your habit daily.", points: 10, feedback: "Excellent! Tracking builds consistency." },
+                        { text: "Only do it when you feel like it.", points: 0, feedback: "Feelings are inconsistent. Try tracking!" },
+                        { text: "Change the habit frequently.", points: 0, feedback: "Frequent changes disrupt consistency." }
+                    ]
+                },
+                {
+                    text: "How can you scale '{habit}' over time?",
+                    choices: [
+                        { text: "Gradually increase the habit’s intensity or duration.", points: 10, feedback: "Great! Gradual scaling builds sustainable habits." },
+                        { text: "Keep it at the same level indefinitely.", points: 0, feedback: "Stagnation limits growth." },
+                        { text: "Jump to advanced levels immediately.", points: 0, feedback: "Big jumps lead to burnout." }
+                    ]
+                }
+            ],
+            reward: [
+                {
+                    text: "How can you make '{habit}' satisfying?",
+                    choices: [
+                        { text: "Celebrate small wins immediately after doing it.", points: 10, feedback: "Great! Immediate rewards reinforce habits." },
+                        { text: "Wait for long-term results to feel good.", points: 0, feedback: "Delayed rewards are less motivating." },
+                        { text: "Criticize yourself for small mistakes.", points: 0, feedback: "Criticism reduces satisfaction." }
+                    ]
+                },
+                {
+                    text: "How can you track progress for '{habit}'?",
+                    choices: [
+                        { text: "Use a habit tracker to mark each completion.", points: 10, feedback: "Perfect! Tracking progress is rewarding." },
+                        { text: "Rely on memory to track it.", points: 0, feedback: "Memory is unreliable for tracking." },
+                        { text: "Only track big milestones.", points: 0, feedback: "Missing small wins reduces motivation." }
+                    ]
+                },
+                {
+                    text: "How can you reinforce '{habit}' long-term?",
+                    choices: [
+                        { text: "Tie it to your identity (e.g., 'I am a reader').", points: 10, feedback: "Excellent! Identity reinforces habits." },
+                        { text: "Focus only on external rewards.", points: 0, feedback: "External rewards fade over time." },
+                        { text: "Change your goal frequently.", points: 0, feedback: "Changing goals disrupts long-term habits." }
+                    ]
+                },
+                {
+                    text: "How can you make '{habit}' part of your lifestyle?",
+                    choices: [
+                        { text: "Integrate it into your daily routine permanently.", points: 10, feedback: "Great! Lifestyle integration ensures longevity." },
+                        { text: "Treat it as a temporary challenge.", points: 0, feedback: "Temporary challenges fade." },
+                        { text: "Only do it when convenient.", points: 0, feedback: "Convenience-based habits lack staying power." }
+                    ]
+                }
+            ]
+        };
 
-            return isAnnual ? estimatedIncome : estimatedIncome / 12;
+        const badHabitQuestions = {
+            cue: [
+                {
+                    text: "How can you remove the cue for '{habit}'?",
+                    choices: [
+                        { text: "Change your environment to eliminate triggers.", points: 10, feedback: "Great! Removing cues prevents bad habits." },
+                        { text: "Keep the trigger in plain sight.", points: 0, feedback: "Visible triggers encourage bad habits." },
+                        { text: "Rely on willpower to resist.", points: 0, feedback: "Willpower alone is unreliable." }
+                    ]
+                },
+                {
+                    text: "How can you disrupt the cue for '{habit}'?",
+                    choices: [
+                        { text: "Replace the bad habit with a good one at the same cue.", points: 10, feedback: "Perfect! Replacing cues redirects behavior." },
+                        { text: "Ignore the cue and hope it goes away.", points: 0, feedback: "Ignoring cues doesn’t eliminate them." },
+                        { text: "Make the cue more appealing.", points: 0, feedback: "Appealing cues strengthen bad habits." }
+                    ]
+                },
+                {
+                    text: "How can you make the cue for '{habit}' invisible?",
+                    choices: [
+                        { text: "Remove or hide the trigger from your environment.", points: 10, feedback: "Excellent! Invisible cues reduce temptation." },
+                        { text: "Keep reminders of the habit around.", points: 0, feedback: "Reminders reinforce bad habits." },
+                        { text: "Tell others to remind you of it.", points: 0, feedback: "External reminders keep cues active." }
+                    ]
+                },
+                {
+                    text: "How can you avoid situations that trigger '{habit}'?",
+                    choices: [
+                        { text: "Alter your routine to bypass triggering contexts.", points: 10, feedback: "Great! Avoiding triggers prevents the habit." },
+                        { text: "Stay in the same triggering environments.", points: 0, feedback: "Familiar environments reinforce bad habits." },
+                        { text: "Rely on distraction to avoid triggers.", points: 0, feedback: "Distraction is a weak long-term strategy." }
+                    ]
+                }
+            ],
+            craving: [
+                {
+                    text: "How can you make '{habit}' unattractive?",
+                    choices: [
+                        { text: "Focus on the negative consequences of the habit.", points: 10, feedback: "Great! Highlighting downsides reduces craving." },
+                        { text: "Think about its short-term benefits.", points: 0, feedback: "Short-term benefits increase craving." },
+                        { text: "Make it feel rewarding.", points: 0, feedback: "Rewards reinforce bad habits." }
+                    ]
+                },
+                {
+                    text: "How can you reduce the appeal of '{habit}'?",
+                    choices: [
+                        { text: "Associate it with something unpleasant.", points: 10, feedback: "Perfect! Unpleasant associations deter bad habits." },
+                        { text: "Pair it with something you enjoy.", points: 0, feedback: "Enjoyable pairings increase craving." },
+                        { text: "Ignore the habit’s impact.", points: 0, feedback: "Ignoring impact doesn’t reduce appeal." }
+                    ]
+                },
+                {
+                    text: "How can you use social influence to avoid '{habit}'?",
+                    choices: [
+                        { text: "Surround yourself with people who don’t do the habit.", points: 10, feedback: "Excellent! Social norms influence behavior." },
+                        { text: "Join a group that encourages the habit.", points: 0, feedback: "That reinforces the bad habit." },
+                        { text: "Keep your habit a secret.", points: 0, feedback: "Secrecy avoids accountability." }
+                    ]
+                },
+                {
+                    text: "How can you shift your mindset about '{habit}'?",
+                    choices: [
+                        { text: "Reframe it as something that conflicts with your values.", points: 10, feedback: "Great! Reframing reduces desire for the habit." },
+                        { text: "Focus on its familiarity and comfort.", points: 0, feedback: "Comfort reinforces bad habits." },
+                        { text: "Pretend the habit doesn’t exist.", points: 0, feedback: "Denial doesn’t address cravings." }
+                    ]
+                }
+            ],
+            response: [
+                {
+                    text: "How can you make '{habit}' difficult to do?",
+                    choices: [
+                        { text: "Add friction (e.g., remove easy access to the habit).", points: 10, feedback: "Great! Adding friction stops bad habits." },
+                        { text: "Make it as easy as possible.", points: 0, feedback: "Ease enables bad habits." },
+                        { text: "Rely on motivation to stop.", points: 0, feedback: "Motivation is unreliable for breaking habits." }
+                    ]
+                },
+                {
+                    text: "How can you interrupt the response for '{habit}'?",
+                    choices: [
+                        { text: "Create a commitment device (e.g., a penalty for doing it).", points: 10, feedback: "Perfect! Commitment devices disrupt bad habits." },
+                        { text: "Allow yourself to do it occasionally.", points: 0, feedback: "Occasional indulgence keeps habits alive." },
+                        { text: "Do nothing and hope it stops.", points: 0, feedback: "Inaction doesn’t break habits." }
+                    ]
+                },
+                {
+                    text: "How can you replace '{habit}' with a better response?",
+                    choices: [
+                        { text: "Substitute a positive habit in its place.", points: 10, feedback: "Excellent! Substitution redirects behavior." },
+                        { text: "Keep the same response but do it less.", points: 0, feedback: "Reducing frequency isn’t enough." },
+                        { text: "Focus on stopping without a replacement.", points: 0, feedback: "Stopping without replacement is hard." }
+                    ]
+                },
+                {
+                    text: "How can you create barriers to '{habit}'?",
+                    choices: [
+                        { text: "Make the habit inconvenient (e.g., lock away temptations).", points: 10, feedback: "Great! Barriers prevent bad habits." },
+                        { text: "Keep temptations easily accessible.", points: 0, feedback: "Accessibility enables bad habits." },
+                        { text: "Rely on self-control alone.", points: 0, feedback: "Self-control is unreliable long-term." }
+                    ]
+                }
+            ],
+            reward: [
+                {
+                    text: "How can you make '{habit}' unsatisfying?",
+                    choices: [
+                        { text: "Track the negative outcomes of doing it.", points: 10, feedback: "Great! Highlighting negatives reduces satisfaction." },
+                        { text: "Reward yourself for doing it.", points: 0, feedback: "Rewards reinforce bad habits." },
+                        { text: "Ignore the outcomes.", points: 0, feedback: "Ignoring outcomes doesn’t deter habits." }
+                    ]
+                },
+                {
+                    text: "How can you remove rewards for '{habit}'?",
+                    choices: [
+                        { text: "Eliminate immediate benefits of the habit.", points: 10, feedback: "Perfect! Removing rewards weakens habits." },
+                        { text: "Celebrate after doing the habit.", points: 0, feedback: "Celebration reinforces bad habits." },
+                        { text: "Focus only on long-term consequences.", points: 0, feedback: "Long-term focus is less effective." }
+                    ]
+                },
+                {
+                    text: "How can you reinforce avoiding '{habit}'?",
+                    choices: [
+                        { text: "Reward yourself for not doing the habit.", points: 10, feedback: "Excellent! Rewarding avoidance strengthens good behavior." },
+                        { text: "Punish yourself for avoiding it.", points: 0, feedback: "Punishment can create negative associations." },
+                        { text: "Do nothing when you avoid it.", points: 0, feedback: "No reinforcement misses motivation." }
+                    ]
+                },
+                {
+                    text: "How can you celebrate breaking '{habit}'?",
+                    choices: [
+                        { text: "Mark each day you avoid it with a positive action.", points: 10, feedback: "Great! Celebrating avoidance reinforces progress." },
+                        { text: "Ignore your progress.", points: 0, feedback: "Ignoring progress reduces motivation." },
+                        { text: "Focus only on the habit itself.", points: 0, feedback: "Focusing on the habit keeps it alive." }
+                    ]
+                }
+            ]
+        };
+
+        function setup() {
+            let canvas = createCanvas(400, 200);
+            canvas.parent('tree-canvas');
         }
 
-        // DOM elements
-        const calcTaxBtn = document.getElementById('calcTaxBtn');
-        const calcSalaryBtn = document.getElementById('calcSalaryBtn');
-        const calcTaxForm = document.getElementById('calcTaxForm');
-        const calcSalaryForm = document.getElementById('calcSalaryForm');
-        const incomeType = document.getElementById('incomeType');
-        const timePeriod = document.getElementById('timePeriod');
-        const salaryInput = document.getElementById('salaryInput');
-        const taxInput = document.getElementById('taxInput');
-        const taxResult = document.getElementById('taxResult');
-        const salaryResult = document.getElementById('salaryResult');
-        const slabDetails = document.getElementById('slabDetails');
-
-        // Toggle between forms
-        calcTaxBtn.addEventListener('click', () => {
-            calcTaxForm.classList.remove('hidden');
-            calcSalaryForm.classList.add('hidden');
-            calcTaxBtn.classList.add('rainbow-glow');
-            calcTaxBtn.classList.remove('bg-gray-300', 'text-gray-800');
-            calcSalaryBtn.classList.add('bg-gray-300', 'text-gray-800');
-            calcSalaryBtn.classList.remove('rainbow-glow');
-            salaryInput.value = '';
-            taxResult.innerHTML = '';
-            slabDetails.classList.add('hidden');
-        });
-
-        calcSalaryBtn.addEventListener('click', () => {
-            calcSalaryForm.classList.remove('hidden');
-            calcTaxForm.classList.add('hidden');
-            calcSalaryBtn.classList.add('rainbow-glow');
-            calcSalaryBtn.classList.remove('bg-gray-300', 'text-gray-800');
-            calcTaxBtn.classList.add('bg-gray-300', 'text-gray-800');
-            calcTaxBtn.classList.remove('rainbow-glow');
-            taxInput.value = '';
-            salaryResult.innerHTML = '';
-        });
-
-        // Update labels based on income type and time period
-        function updateLabels() {
-            const isAnnual = timePeriod.value === 'annual';
-            const incomeLabel = incomeType.value === 'salaried' 
-                ? (isAnnual ? 'Annual Salary (PKR)' : 'Monthly Salary (PKR)') 
-                : (isAnnual ? 'Annual Business Income (PKR)' : 'Monthly Business Income (PKR)');
-            const taxLabel = isAnnual ? 'Annual Tax (PKR)' : 'Monthly Tax (PKR)';
-            document.querySelector('label[for="salaryInput"]').textContent = incomeLabel;
-            document.querySelector('label[for="taxInput"]').textContent = taxLabel;
-            salaryInput.placeholder = `Enter ${incomeLabel.toLowerCase()}`;
-            taxInput.placeholder = `Enter ${taxLabel.toLowerCase()}`;
+        function draw() {
+            background(255);
+            // Draw Progress Tree with Animation
+            stroke(139, 69, 19);
+            strokeWeight(10);
+            line(200, 200, 200, 200 - treeHeight);
+            noStroke();
+            fill(34, 139, 34);
+            let sway = sin(frameCount * 0.05) * 5;
+            ellipse(200 + sway, 200 - treeHeight, 50, 50);
         }
 
-        incomeType.addEventListener('change', updateLabels);
-        timePeriod.addEventListener('change', () => {
-            updateLabels();
-            salaryInput.value = '';
-            taxInput.value = '';
-            taxResult.innerHTML = '';
-            salaryResult.innerHTML = '';
-            slabDetails.classList.add('hidden');
+        // Form Handling
+        document.getElementById('player-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            playerData = {
+                name: document.getElementById('name').value,
+                team: document.getElementById('team').value,
+                city: document.getElementById('city').value,
+                cell: document.getElementById('cell').value,
+                date: document.getElementById('date').value,
+                designation: document.getElementById('designation').value
+            };
+            habitType = document.getElementById('habit-type').value;
+            selectedHabit = habitType === 'good' ? document.getElementById('good-habit').value : document.getElementById('bad-habit').value;
+            setActiveTab('game');
+            tabs.game.classList.remove('hidden');
+            document.getElementById('player-info').innerText = `Player: ${playerData.name}, Team: ${playerData.team}, ${playerData.designation}, ${playerData.city}`;
+            document.getElementById('selected-habit').innerText = `Habit: ${selectedHabit}`;
+            updateQuest();
         });
 
-        // Calculate tax on income input
-        salaryInput.addEventListener('input', () => {
-            const income = parseFloat(salaryInput.value) || 0;
-            const isAnnual = timePeriod.value === 'annual';
-            if (income < 0) {
-                taxResult.innerHTML = '<p class="text-red-500 fade-in">Please enter a valid income.</p>';
-                slabDetails.classList.add('hidden');
-                return;
+        document.getElementById('habit-type').addEventListener('change', (e) => {
+            document.getElementById('good-habits').classList.add('hidden');
+            document.getElementById('bad-habits').classList.add('hidden');
+            if (e.target.value === 'good') {
+                document.getElementById('good-habits').classList.remove('hidden');
+            } else {
+                document.getElementById('bad-habits').classList.remove('hidden');
             }
-            const { monthlyTax, slabDetail } = calculateMonthlyTax(income, isAnnual);
-            const netIncome = isAnnual ? (income - monthlyTax * 12).toFixed(2) : (income - monthlyTax).toFixed(2);
-            const taxDisplay = isAnnual ? (monthlyTax * 12).toFixed(2) : monthlyTax.toFixed(2);
-            const period = isAnnual ? 'Annual' : 'Monthly';
-            taxResult.innerHTML = `
-                <p class="text-green-500 font-bold fade-in">${period} Tax: PKR ${taxDisplay}</p>
-                <p class="text-blue-500 font-bold fade-in">Net ${period} Income: PKR ${netIncome}</p>
-            `;
-            slabDetails.innerHTML = slabDetail;
-            slabDetails.classList.remove('hidden');
         });
 
-        // Calculate income from tax input
-        taxInput.addEventListener('input', () => {
-            const tax = parseFloat(taxInput.value) || 0;
-            const isAnnual = timePeriod.value === 'annual';
-            if (tax < 0) {
-                salaryResult.innerHTML = '<p class="text-red-500 fade-in">Please enter a valid tax amount.</p>';
-                return;
+        // Quest Logic
+        function updateQuest() {
+            if (currentQuest < 12) {
+                const stageOrder = ['cue', 'cue', 'cue', 'craving', 'craving', 'craving', 'response', 'response', 'response', 'reward', 'reward', 'reward'];
+                const stage = stageOrder[currentQuest];
+                const questions = habitType === 'good' ? goodHabitQuestions[stage] : badHabitQuestions[stage];
+                const availableQuestions = questions.filter(q => !askedQuestions.includes(q.text));
+                if (availableQuestions.length === 0) {
+                    askedQuestions = askedQuestions.filter(q => !questions.some(q2 => q2.text === q));
+                }
+                const question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+                askedQuestions.push(question.text);
+                document.getElementById('quest-number').innerText = currentQuest + 1;
+                document.getElementById('quest-text').innerText = question.text.replace('{habit}', selectedHabit);
+                let choicesDiv = document.getElementById('choices');
+                choicesDiv.innerHTML = '';
+                question.choices.forEach((choice, index) => {
+                    let button = document.createElement('button');
+                    button.className = 'choice-button';
+                    button.innerText = choice.text;
+                    button.onclick = () => {
+                        makeChoice(choice);
+                        currentQuest++;
+                        updateQuest();
+                    };
+                    choicesDiv.appendChild(button);
+                });
+            } else {
+                showScoreCard();
             }
-            const estimatedIncome = calculateIncomeFromTax(tax, isAnnual).toFixed(2);
-            const period = isAnnual ? 'Annual' : 'Monthly';
-            salaryResult.innerHTML = `
-                <p class="text-blue-500 font-bold fade-in">Estimated ${period} Income: PKR ${estimatedIncome}</p>
-            `;
+        }
+
+        function makeChoice(choice) {
+            growthPoints += choice.points;
+            treeHeight += choice.points * 2;
+            habits.push({ action: choice.text, feedback: choice.feedback });
+            updateHabitLog();
+            updateScore();
+        }
+
+        function updateHabitLog() {
+            let log = document.getElementById('habit-log');
+            log.innerHTML = '';
+            habits.forEach(habit => {
+                let li = document.createElement('li');
+                li.className = 'text-gray-600';
+                li.innerText = `${habit.action}: ${habit.feedback}`;
+                log.appendChild(li);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = `Growth Points: ${growthPoints}`;
+        }
+
+        function showScoreCard() {
+            setActiveTab('score');
+            tabs.score.classList.remove('hidden');
+            document.getElementById('final-score').innerText = `Score: ${growthPoints}/120`;
+            document.getElementById('player-details').innerText = `Awarded to ${playerData.name}\nTeam: ${playerData.team}\nDesignation: ${playerData.designation}\nCity: ${playerData.city}\nDate: ${playerData.date}`;
+            let encouragement = '';
+            if (growthPoints >= 100) {
+                encouragement = "Outstanding! You've mastered the art of habit-building. Keep making those 1% improvements!";
+            } else if (growthPoints >= 70) {
+                encouragement = "Great job! You're well on your way to transforming your habits. Stay consistent!";
+            } else if (growthPoints >= 40) {
+                encouragement = "Nice effort! You've learned key strategies. Practice them daily to see big changes!";
+            } else {
+                encouragement = "Good start! Review the habit loop and try again to boost your score!";
+            }
+            document.getElementById('encouragement').innerText = encouragement;
+        }
+
+        document.getElementById('home-button').addEventListener('click', () => {
+            setActiveTab('form');
+            growthPoints = 0;
+            habits = [];
+            currentQuest = 0;
+            treeHeight = 50;
+            askedQuestions = [];
+            document.getElementById('player-form').reset();
+            document.getElementById('good-habits').classList.add('hidden');
+            document.getElementById('bad-habits').classList.add('hidden');
+            updateScore();
+            tabs.game.classList.add('hidden');
+            tabs.score.classList.add('hidden');
         });
 
-        // Initialize labels
-        updateLabels();
+        document.getElementById('download-button').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Floral Border Pattern
+            doc.setDrawColor(255, 182, 193);
+            doc.setLineWidth(2);
+            for (let x = 10; x <= 200; x += 10) {
+                doc.circle(x, 10, 3);
+                doc.circle(x, 287, 3);
+            }
+            for (let y = 10; y <= 287; y += 10) {
+                doc.circle(10, y, 3);
+                doc.circle(200, y, 3);
+            }
+            doc.setDrawColor(255, 215, 0);
+            doc.setLineWidth(1);
+            doc.rect(8, 8, 194, 281);
+
+            // Certificate Content
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(24);
+            doc.setTextColor(0, 102, 204);
+            doc.text('Habit Builder Quest Certificate', 105, 30, { align: 'center' });
+
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Awarded to: ${playerData.name}`, 105, 60, { align: 'center' });
+            doc.text(`Team: ${playerData.team}`, 105, 80, { align: 'center' });
+            doc.text(`Designation: ${playerData.designation}`, 105, 100, { align: 'center' });
+            doc.text(`City: ${playerData.city}`, 105, 120, { align: 'center' });
+            doc.text(`Date: ${playerData.date}`, 105, 140, { align: 'center' });
+
+            doc.setFontSize(20);
+            doc.setTextColor(204, 0, 0);
+            doc.text(`Score: ${growthPoints}/120`, 105, 170, { align: 'center' });
+
+            doc.setFontSize(14);
+            doc.setFont('Helvetica', 'italic');
+            const encouragement = document.getElementById('encouragement').innerText;
+            const splitText = doc.splitTextToSize(encouragement, 180);
+            doc.text(splitText, 105, 190, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.setFont('Helvetica', 'normal');
+            doc.text('"Small changes, remarkable results." – James Clear', 105, 240, { align: 'center' });
+
+            doc.save(`Habit_Builder_Certificate_${playerData.name}.pdf`);
+        });
     </script>
 </body>
 </html>
