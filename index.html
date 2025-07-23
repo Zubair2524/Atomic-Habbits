@@ -16,276 +16,131 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            justify-content: center;
-            gap: 0;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .tab-nav button {
-            padding: 12px 24px;
-            font-weight: 700;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            border-radius: 8px 8px 0 0;
+        body { background-color: #f3f4f6; }
+        #game-container, #form-container, #score-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .rainbow-glow {
             position: relative;
-            overflow: hidden;
-        }
-
-        .tab-nav button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .tab-nav button:hover::before {
-            left: 100%;
-        }
-
-        .tab-nav button.active {
-            transform: scale(1.1);
-            z-index: 1;
-        }
-
-        .tab-nav button:nth-child(1) { background: linear-gradient(45deg, #ff0000, #ff6b6b); }
-        .tab-nav button:nth-child(2) { background: linear-gradient(45deg, #ffa500, #ffd700); }
-        .tab-nav button:nth-child(3) { background: linear-gradient(45deg, #00ff00, #4ecdc4); }
-
-        /* Containers */
-        #form-container, #game-container, #score-container {
-            max-width: 900px;
-            margin: 20px auto;
             padding: 20px;
-            border-radius: 15px;
             background: white;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.5s ease-out;
+            border-radius: 10px;
+            border: 4px solid transparent;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            animation: rainbow-glow 5s linear infinite;
         }
-
-        @media (max-width: 640px) {
-            #form-container, #game-container, #score-container {
-                margin: 10px;
-                padding: 15px;
+        @keyframes rainbow-glow {
+            0% { 
+                border-color: red; 
+                box-shadow: 0 0 20px red, 0 0 30px orange; 
+            }
+            14% { 
+                border-color: orange; 
+                box-shadow: 0 0 20px orange, 0 0 30px yellow; 
+            }
+            28% { 
+                border-color: yellow; 
+                box-shadow: 0 0 20px yellow, 0 0 30px green; 
+            }
+            42% { 
+                border-color: green; 
+                box-shadow: 0 0 20px green, 0 0 30px blue; 
+            }
+            57% { 
+                border-color: blue; 
+                box-shadow: 0 0 20px blue, 0 0 30px indigo; 
+            }
+            71% { 
+                border-color: indigo; 
+                box-shadow: 0 0 20px indigo, 0 0 30px violet; 
+            }
+            85% { 
+                border-color: violet; 
+                box-shadow: 0 0 20px violet, 0 0 30px red; 
+            }
+            100% { 
+                border-color: red; 
+                box-shadow: 0 0 20px red, 0 0 30px orange; 
             }
         }
-
-        /* Animations */
-        @keyframes slideIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Form Styling */
-        #player-form {
-            display: grid;
-            gap: 1rem;
-        }
-
-        #player-form input, #player-form select {
-            padding: 12px;
-            border: 2px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.3s ease, transform 0.2s ease;
-        }
-
-        #player-form input:focus, #player-form select:focus {
-            border-color: #3b82f6;
-            transform: scale(1.02);
-            outline: none;
-        }
-
-        #player-form button {
-            background: linear-gradient(45deg, #3b82f6, #60a5fa);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-
-        #player-form button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(45deg, #2563eb, #3b82f6);
-        }
-
-        /* Game Page */
-        .rainbow-card {
-            background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
-            padding: 20px;
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            animation: rainbowGlow 3s infinite;
-        }
-
-        @keyframes rainbowGlow {
-            0% { filter: brightness(100%); }
-            50% { filter: brightness(120%); }
-            100% { filter: brightness(100%); }
-        }
-
         #quest-text {
             font-size: 1.5rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            color: #1a202c;
+            text-align: center;
         }
-
-        #progress-tree {
-            border: 3px solid #4b5563;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        #habit-log {
-            height: 150px;
-            overflow-y: auto;
-            background: #f9fafb;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .choice-button {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid white;
-            padding: 12px;
-            margin: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .choice-button:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: translateX(5px);
-        }
-
-        /* Score Card */
+        #progress-tree { border: 2px solid #4b5563; border-radius: 8px; }
+        #habit-log { height: 150px; overflow-y: auto; }
+        .hidden { display: none; }
         #score-container {
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             color: white;
+            font-family: 'Poppins', sans-serif;
             border: 5px solid #ffd700;
-            animation: pulse 2s infinite;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-
-        #download-button, #home-button {
+        #score-container h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        #score-container p {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        #download-button {
             background: #ffd700;
             color: #1a202c;
+            font-weight: bold;
             padding: 12px 24px;
             border-radius: 8px;
-            font-weight: 700;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s;
         }
-
-        #download-button:hover, #home-button:hover {
+        #download-button:hover {
             transform: scale(1.05);
         }
-
-        /* Responsive Adjustments */
-        @media (max-width: 640px) {
-            .tab-nav {
-                flex-direction: column;
-                padding: 10px;
-            }
-
-            .tab-nav button {
-                width: 100%;
-                margin: 5px 0;
-                border-radius: 8px;
-            }
-
-            #quest-text {
-                font-size: 1.25rem;
-            }
-
-            #score-container h1 {
-                font-size: 2rem;
-            }
-        }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <!-- Tab Navigation -->
-    <div class="tab-nav">
-        <button id="form-tab" class="active">Start</button>
-        <button id="game-tab" class="hidden">Game</button>
-        <button id="score-tab" class="hidden">Score</button>
-    </div>
-
     <!-- Form Page -->
-    <div id="form-container">
-        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
+    <div id="form-container" class="bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-3xl font-bold text-center mb-4">Habit Builder Quest</h1>
         <form id="player-form" class="space-y-4">
             <div>
-                <label class="block text-gray-700 font-semibold">Name</label>
-                <input type="text" id="name" class="w-full" required>
+                <label class="block text-gray-700">Name</label>
+                <input type="text" id="name" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">Team</label>
-                <input type="text" id="team" class="w-full" required>
+                <label class="block text-gray-700">Team</label>
+                <input type="text" id="team" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">City</label>
-                <input type="text" id="city" class="w-full" required>
+                <label class="block text-gray-700">City</label>
+                <input type="text" id="city" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">Cell Number</label>
-                <input type="tel" id="cell" class="w-full" required>
+                <label class="block text-gray-700">Cell Number</label>
+                <input type="tel" id="cell" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">Date</label>
-                <input type="date" id="date" class="w-full" required>
+                <label class="block text-gray-700">Date</label>
+                <input type="date" id="date" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">Designation</label>
-                <input type="text" id="designation" class="w-full" required>
+                <label class="block text-gray-700">Designation</label>
+                <input type="text" id="designation" class="w-full p-2 border rounded" required>
             </div>
             <div>
-                <label class="block text-gray-700 font-semibold">Select Habit</label>
-                <select id="habit-type" class="w-full" required>
+                <label class="block text-gray-700">Select Habit</label>
+                <select id="habit-type" class="w-full p-2 border rounded" required>
                     <option value="good">Adopt a Good Habit</option>
                     <option value="bad">Eliminate a Bad Habit</option>
                 </select>
             </div>
             <div id="good-habits" class="hidden">
-                <label class="block text-gray-700 font-semibold">Good Habit to Adopt</label>
-                <select id="good-habit" class="w-full">
+                <label class="block text-gray-700">Good Habit to Adopt</label>
+                <select id="good-habit" class="w-full p-2 border rounded">
                     <option value="Drink water first thing in the morning">Drink water first thing in the morning</option>
                     <option value="Exercise for 30 minutes daily">Exercise for 30 minutes daily</option>
                     <option value="Read 10 pages of a book daily">Read 10 pages of a book daily</option>
@@ -309,8 +164,8 @@
                 </select>
             </div>
             <div id="bad-habits" class="hidden">
-                <label class="block text-gray-700 font-semibold">Bad Habit to Eliminate</label>
-                <select id="bad-habit" class="w-full">
+                <label class="block text-gray-700">Bad Habit to Eliminate</label>
+                <select id="bad-habit" class="w-full p-2 border rounded">
                     <option value="Procrastinating on important tasks">Procrastinating on important tasks</option>
                     <option value="Checking social media excessively">Checking social media excessively</option>
                     <option value="Skipping breakfast">Skipping breakfast</option>
@@ -333,379 +188,39 @@
                     <option value="Negative self-talk">Negative self-talk</option>
                 </select>
             </div>
-            <button type="submit" class="w-full">Start Game</button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Start Game</button>
         </form>
     </div>
 
     <!-- Game Page -->
-    <div id="game-container" class="hidden">
-        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
-        <p id="player-info" class="text-gray-700 mb-4 text-center"></p>
-        <p id="selected-habit" class="text-lg font-medium mb-4 text-center"></p>
-        <div id██████
-
-System: I've noticed that the artifact content is incomplete and cuts off mid-way. I'll provide the complete updated version with the requested enhancements, maintaining the same artifact_id as it’s an update to the provided artifact.
-
-<xaiArtifact artifact_id="395188d7-da25-4da8-8181-5bbd742ee848" artifact_version_id="0b57226c-fa4c-4fc0-823c-ff72777836af" title="index.html" contentType="text/html">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Builder Quest</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            justify-content: center;
-            gap: 0;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .tab-nav button {
-            padding: 12px 24px;
-            font-weight: 700;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            border-radius: 8px 8px 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tab-nav button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .tab-nav button:hover::before {
-            left: 100%;
-        }
-
-        .tab-nav button.active {
-            transform: scale(1.1);
-            z-index: 1;
-        }
-
-        .tab-nav button:nth-child(1) { background: linear-gradient(45deg, #ff0000, #ff6b6b); }
-        .tab-nav button:nth-child(2) { background: linear-gradient(45deg, #ffa500, #ffd700); }
-        .tab-nav button:nth-child(3) { background: linear-gradient(45deg, #00ff00, #4ecdc4); }
-
-        /* Containers */
-        #form-container, #game-container, #score-container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 15px;
-            background: white;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @media (max-width: 640px) {
-            #form-container, #game-container, #score-container {
-                margin: 10px;
-                padding: 15px;
-            }
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes rainbowGlow {
-            0% { filter: brightness(100%); }
-            50% { filter: brightness(120%); }
-            100% { filter: brightness(100%); }
-        }
-
-        /* Form Styling */
-        #player-form {
-            display: grid;
-            gap: 1rem;
-        }
-
-        #player-form input, #player-form select {
-            padding: 12px;
-            border: 2px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.3s ease, transform 0.2s ease;
-        }
-
-        #player-form input:focus, #player-form select:focus {
-            border-color: #3b82f6;
-            transform: scale(1.02);
-            outline: none;
-        }
-
-        #player-form button {
-            background: linear-gradient(45deg, #3b82f6, #60a5fa);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-
-        #player-form button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(45deg, #2563eb, #3b82f6);
-        }
-
-        /* Game Page */
-        .rainbow-card {
-            background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
-            padding: 20px;
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            animation: rainbowGlow 3s infinite;
-        }
-
-        #quest-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        #progress-tree {
-            border: 3px solid #4b5563;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        #habit-log {
-            height: 150px;
-            overflow-y: auto;
-            background: #f9fafb;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .choice-button {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid white;
-            padding: 12px;
-            margin: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .choice-button:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: translateX(5px);
-        }
-
-        /* Score Card */
-        #score-container {
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
-            color: white;
-            border: 5px solid #ffd700;
-            animation: pulse 2s infinite;
-        }
-
-        #download-button, #home-button {
-            background: #ffd700;
-            color: #1a202c;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
-            transition: transform 0.3s ease;
-        }
-
-        #download-button:hover, #home-button:hover {
-            transform: scale(1.05);
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 640px) {
-            .tab-nav {
-                flex-direction: column;
-                padding: 10px;
-            }
-
-            .tab-nav button {
-                width: 100%;
-                margin: 5px 0;
-                border-radius: 8px;
-            }
-
-            #quest-text {
-                font-size: 1.25rem;
-            }
-
-            #score-container h1 {
-                font-size: 2rem;
-            }
-        }
-
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-    <!-- Tab Navigation -->
-    <div class="tab-nav">
-        <button id="form-tab" class="active">Start</button>
-        <button id="game-tab" class="hidden">Game</button>
-        <button id="score-tab" class="hidden">Score</button>
-    </div>
-
-    <!-- Form Page -->
-    <div id="form-container">
-        < distrustworthy class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
-        <form id="player-form" class="space-y-4">
-            <div>
-                <label class="block text-gray-700 font-semibold">Name</label>
-                <input type="text" id="name" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">Team</label>
-                <input type="text" id="team" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">City</label>
-                <input type="text" id="city" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">Cell Number</label>
-                <input type="tel" id="cell" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">Date</label>
-                <input type="date" id="date" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">Designation</label>
-                <input type="text" id="designation" class="w-full" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold">Select Habit</label>
-                <select id="habit-type" class="w-full" required>
-                    <option value="good">Adopt a Good Habit</option>
-                    <option value="bad">Eliminate a Bad Habit</option>
-                </select>
-            </div>
-            <div id="good-habits" class="hidden">
-                <label class="block text-gray-700 font-semibold">Good Habit to Adopt</label>
-                <select id="good-habit" class="w-full">
-                    <option value="Drink water first thing in the morning">Drink water first thing in the morning</option>
-                    <option value="Exercise for 30 minutes daily">Exercise for 30 minutes daily</option>
-                    <option value="Read 10 pages of a book daily">Read 10 pages of a book daily</option>
-                    <option value="Practice gratitude journaling">Practice gratitude journaling</option>
-                    <option value="Meditate for 5 minutes daily">Meditate for 5 minutes daily</option>
-                    <option value="Plan your day the night before">Plan your day the night before</option>
-                    <option value="Eat a healthy breakfast">Eat a healthy breakfast</option>
-                    <option value="Take 10,000 steps daily">Take 10,000 steps daily</option>
-                    <option value="Practice deep breathing exercises">Practice deep breathing exercises</option>
-                    <option value="Write down three daily goals">Write down three daily goals</option>
-                    <option value="Limit screen time to 2 hours daily">Limit screen time to 2 hours daily</option>
-                    <option value="Get 7–8 hours of sleep">Get 7–8 hours of sleep</option>
-                    <option value="Compliment someone daily">Compliment someone daily</option>
-                    <option value="Organize your workspace daily">Organize your workspace daily</option>
-                    <option value="Learn a new skill weekly">Learn a new skill weekly</option>
-                    <option value="Review your goals weekly">Review your goals weekly</option>
-                    <option value="Stretch for 5 minutes daily">Stretch for 5 minutes daily</option>
-                    <option value="Eat 5 servings of fruits/vegetables daily">Eat 5 servings of fruits/vegetables daily</option>
-                    <option value="Save 10% of your income monthly">Save 10% of your income monthly</option>
-                    <option value="Practice active listening in conversations">Practice active listening in conversations</option>
-                </select>
-            </div>
-            <div id="bad-habits" class="hidden">
-                <label class="block text-gray-700 font-semibold">Bad Habit to Eliminate</label>
-                <select id="bad-habit" class="w-full">
-                    <option value="Procrastinating on important tasks">Procrastinating on important tasks</option>
-                    <option value="Checking social media excessively">Checking social media excessively</option>
-                    <option value="Skipping breakfast">Skipping breakfast</option>
-                    <option value="Staying up past midnight">Staying up past midnight</option>
-                    <option value="Binge-watching TV shows">Binge-watching TV shows</option>
-                    <option value="Drinking sugary beverages daily">Drinking sugary beverages daily</option>
-                    <option value="Nail-biting">Nail-biting</option>
-                    <option value="Overthinking decisions">Overthinking decisions</option>
-                    <option value="Leaving dishes unwashed overnight">Leaving dishes unwashed overnight</option>
-                    <option value="Multitasking during meetings">Multitasking during meetings</option>
-                    <option value="Skipping workouts regularly">Skipping workouts regularly</option>
-                    <option value="Impulse buying">Impulse buying</option>
-                    <option value="Interrupting others while speaking">Interrupting others while speaking</option>
-                    <option value="Leaving tasks incomplete">Leaving tasks incomplete</option>
-                    <option value="Eating junk food late at night">Eating junk food late at night</option>
-                    <option value="Ignoring emails for days">Ignoring emails for days</option>
-                    <option value="Slouching while sitting">Slouching while sitting</option>
-                    <option value="Comparing yourself to others">Comparing yourself to others</option>
-                    <option value="Overspending on non-essentials">Overspending on non-essentials</option>
-                    <option value="Negative self-talk">Negative self-talk</option>
-                </select>
-            </div>
-            <button type="submit" class="w-full">Start Game</button>
-        </form>
-    </div>
-
-    <!-- Game Page -->
-    <div id="game-container" class="hidden">
-        <h1 class="text-3xl font-bold text-center mb-6">Habit Builder Quest</h1>
-        <p id="player-info" class="text-gray-700 mb-4 text-center"></p>
-        <p id="selected-habit" class="text-lg font-medium mb-4 text-center"></p>
-        <div id="progress-tree" class="mb-4">
+    <div id="game-container" class="bg-white shadow-lg rounded-lg p-6 hidden">
+        <h1 class="text-3xl font-bold text-center mb-4">Habit Builder Quest</h1>
+        <p id="player-info" class="text-gray-700 mb-4"></p>
+        <p id="selected-habit" class="text-lg font-medium mb-4"></p>
+        <div id="progress-tree" class="mb-4 rainbow-border">
             <canvas id="tree-canvas"></canvas>
         </div>
         <div id="quest-area" class="mb-4 p-4">
-            <h2 class="text-xl font-semibold text-center">Quest <span id="quest-number">1</span>/12</h2>
-            <div class="rainbow-card">
+            <h2 class="text-xl font-semibold">Quest <span id="quest-number">1</span>/12</h2>
+            <div class="rainbow-glow">
                 <p id="quest-text"></p>
             </div>
-            <div id="choices" class="mt-4 space-y-2"></div>
+            <div id="choices" class="mt-4"></div>
         </div>
-        <div id="habit-tracker" class="mb-4 p-4">
-            <h2 class="text-xl font-semibold text-center">Habit Tracker</h2>
+        <div id="habit-tracker" class="mb-4 rainbow-border p-4">
+            <h2 class="text-xl font-semibold">Habit Tracker</h2>
             <ul id="habit-log" class="bg-gray-100 p-2 rounded"></ul>
         </div>
-        <p id="score" class="text-lg font-medium text-center">Growth Points: 0</p>
+        <p id="score" class="text-lg font-medium">Growth Points: 0</p>
     </div>
 
     <!-- Score Card Page -->
-    <div id="score-container" class="hidden p-6">
+    <div id="score-container" class="p-6 hidden">
         <h1 class="text-center mb-4">Habit Builder Quest Certificate</h1>
         <p id="player-details" class="text-center mb-4"></p>
         <p id="final-score" class="text-center mb-4"></p>
         <p id="encouragement" class="text-center mb-4 italic"></p>
-        <p class="text-center mb-4">"Small changes, remarkable results." – James Clear</p>
+        <p class="text-center.mb-4">"Small changes, remarkable results." – James Clear</p>
         <div class="flex justify-center space-x-4">
             <button id="download-button" class="font-bold">Download Certificate</button>
             <button id="home-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold">Back to Home</button>
@@ -721,26 +236,6 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
         let selectedHabit = '';
         let habitType = '';
         let askedQuestions = [];
-
-        // Tab Navigation Logic
-        const tabs = {
-            form: document.getElementById('form-tab'),
-            game: document.getElementById('game-tab'),
-            score: document.getElementById('score-tab')
-        };
-
-        function setActiveTab(tabName) {
-            Object.values(tabs).forEach(tab => tab.classList.remove('active'));
-            tabs[tabName].classList.add('active');
-            document.getElementById('form-container').classList.add('hidden');
-            document.getElementById('game-container').classList.add('hidden');
-            document.getElementById('score-container').classList.add('hidden');
-            document.getElementById(`${tabName}-container`).classList.remove('hidden');
-        }
-
-        tabs.form.addEventListener('click', () => setActiveTab('form'));
-        tabs.game.addEventListener('click', () => setActiveTab('game'));
-        tabs.score.addEventListener('click', () => setActiveTab('score'));
 
         const goodHabitQuestions = {
             cue: [
@@ -831,7 +326,7 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
                 {
                     text: "How can you ensure consistency for '{habit}'?",
                     choices: [
-                        { text: "Track your habit daily.", points: 10, feedback: "Excellent! Tracking builds consistency." },
+                        { text: "Track your habit daily.", points: 10, feedback: "Excellent!-tracking builds consistency." },
                         { text: "Only do it when you feel like it.", points: 0, feedback: "Feelings are inconsistent. Try tracking!" },
                         { text: "Change the habit frequently.", points: 0, feedback: "Frequent changes disrupt consistency." }
                     ]
@@ -1027,14 +522,13 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
 
         function draw() {
             background(255);
-            // Draw Progress Tree with Animation
+            // Draw Progress Tree
             stroke(139, 69, 19);
             strokeWeight(10);
             line(200, 200, 200, 200 - treeHeight);
             noStroke();
             fill(34, 139, 34);
-            let sway = sin(frameCount * 0.05) * 5;
-            ellipse(200 + sway, 200 - treeHeight, 50, 50);
+            ellipse(200, 200 - treeHeight, 50, 50);
         }
 
         // Form Handling
@@ -1050,8 +544,8 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
             };
             habitType = document.getElementById('habit-type').value;
             selectedHabit = habitType === 'good' ? document.getElementById('good-habit').value : document.getElementById('bad-habit').value;
-            setActiveTab('game');
-            tabs.game.classList.remove('hidden');
+            document.getElementById('form-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
             document.getElementById('player-info').innerText = `Player: ${playerData.name}, Team: ${playerData.team}, ${playerData.designation}, ${playerData.city}`;
             document.getElementById('selected-habit').innerText = `Habit: ${selectedHabit}`;
             updateQuest();
@@ -1073,8 +567,10 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
                 const stageOrder = ['cue', 'cue', 'cue', 'craving', 'craving', 'craving', 'response', 'response', 'response', 'reward', 'reward', 'reward'];
                 const stage = stageOrder[currentQuest];
                 const questions = habitType === 'good' ? goodHabitQuestions[stage] : badHabitQuestions[stage];
+                // Filter out already asked questions for this stage
                 const availableQuestions = questions.filter(q => !askedQuestions.includes(q.text));
                 if (availableQuestions.length === 0) {
+                    // Reset asked questions for this stage if none are available
                     askedQuestions = askedQuestions.filter(q => !questions.some(q2 => q2.text === q));
                 }
                 const question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
@@ -1085,7 +581,7 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
                 choicesDiv.innerHTML = '';
                 question.choices.forEach((choice, index) => {
                     let button = document.createElement('button');
-                    button.className = 'choice-button';
+                    button.className = 'bg-blue-500 text-white px-4 py-2 rounded mr-2 mb-2 hover:bg-blue-600';
                     button.innerText = choice.text;
                     button.onclick = () => {
                         makeChoice(choice);
@@ -1123,8 +619,8 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
         }
 
         function showScoreCard() {
-            setActiveTab('score');
-            tabs.score.classList.remove('hidden');
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('score-container').classList.remove('hidden');
             document.getElementById('final-score').innerText = `Score: ${growthPoints}/120`;
             document.getElementById('player-details').innerText = `Awarded to ${playerData.name}\nTeam: ${playerData.team}\nDesignation: ${playerData.designation}\nCity: ${playerData.city}\nDate: ${playerData.date}`;
             let encouragement = '';
@@ -1141,7 +637,8 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
         }
 
         document.getElementById('home-button').addEventListener('click', () => {
-            setActiveTab('form');
+            document.getElementById('score-container').classList.add('hidden');
+            document.getElementById('form-container').classList.remove('hidden');
             growthPoints = 0;
             habits = [];
             currentQuest = 0;
@@ -1151,8 +648,6 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
             document.getElementById('good-habits').classList.add('hidden');
             document.getElementById('bad-habits').classList.add('hidden');
             updateScore();
-            tabs.game.classList.add('hidden');
-            tabs.score.classList.add('hidden');
         });
 
         document.getElementById('download-button').addEventListener('click', () => {
@@ -1160,19 +655,21 @@ System: I've noticed that the artifact content is incomplete and cuts off mid-wa
             const doc = new jsPDF();
 
             // Floral Border Pattern
-            doc.setDrawColor(255, 182, 193);
+            doc.setDrawColor(255, 182, 193); // Light pink for floral effect
             doc.setLineWidth(2);
             for (let x = 10; x <= 200; x += 10) {
+                // Top and bottom borders
                 doc.circle(x, 10, 3);
                 doc.circle(x, 287, 3);
             }
             for (let y = 10; y <= 287; y += 10) {
+                // Left and right borders
                 doc.circle(10, y, 3);
                 doc.circle(200, y, 3);
             }
-            doc.setDrawColor(255, 215, 0);
+            doc.setDrawColor(255, 215, 0); // Gold border outline
             doc.setLineWidth(1);
-            doc.rect(8, 8, 194, 281);
+            doc.rect(8, 8, 194, 281); // Outer border
 
             // Certificate Content
             doc.setFont('Helvetica', 'bold');
